@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using SmartSchool.API.Data;
 using SmartSchool.API.Models;
@@ -14,11 +12,21 @@ namespace SmartSchool.API.Controllers
     public class AlunoController : ControllerBase
     {        
         private readonly Contexto _contexto;
+        public readonly IRepository _repo;
 
-        public AlunoController(Contexto contexto) 
+        public AlunoController(Contexto contexto, IRepository repo) 
        {
            _contexto = contexto;
+           _repo = repo;
        }
+
+       [HttpGet("resposta")]
+       public IActionResult pegaResposta()
+       {
+           
+           return Ok(_repo.pegaResposta());
+       }      
+
 
        [HttpGet]
        public IActionResult Get()

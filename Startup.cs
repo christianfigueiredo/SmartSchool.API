@@ -20,6 +20,9 @@ namespace SmartSchool.API
             services.AddDbContext<Contexto>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("conexao")));
 
+            services.AddScoped<IRepository, Repository>();
+  
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
