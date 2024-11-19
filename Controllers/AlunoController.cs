@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SmartSchool.API.Data;
 using SmartSchool.API.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -11,34 +12,18 @@ namespace SmartSchool.API.Controllers
     [ApiController]
     public class AlunoController : ControllerBase
     {        
-        public List<Aluno> Alunos = new List<Aluno>()
-        {
-            new Aluno() {               
-                Id = 1,
-                Nome = "Paulo",
-                Sobrenome = "Silva",
-                Telefone = "11999999999"
-            },
-            new Aluno() {
-                Id = 2,
-                Nome = "Pedro",
-                Sobrenome = "Silva",
-                Telefone = "1188888888"
-            },
-            new Aluno() {
-                Id = 3,
-                Nome = "Jorge",
-                Sobrenome = "Souza",
-                Telefone = "2299999999"
-            },
+        private readonly Contexto _contexto;
 
-        };
-       public AlunoController() { }
+        public AlunoController(Contexto contexto) 
+       {
+           _contexto = contexto;
+       }
 
        [HttpGet]
        public IActionResult Get()
        {
-           return Ok(Alunos);
+           var alunos = _contexto.Alunos.ToList();
+           return Ok(alunos);
        }      
 
        [HttpGet("{id}")] 
@@ -46,7 +31,7 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               var aluno = Alunos.FirstOrDefault(a => a.Id == id);
+               var aluno = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
                if(aluno == null)
                 return NotFound("Id não encontrado");
                return Ok(aluno);
@@ -62,7 +47,7 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               var aluno = Alunos.FirstOrDefault(a => a.Nome.Contains(nome) && a.Sobrenome.Contains(sobrenome));
+               var aluno = _contexto.Alunos.FirstOrDefault(a => a.Nome.Contains(nome) && a.Sobrenome.Contains(sobrenome));
                if(aluno == null)
                 return NotFound("Aluno não encontrado");
                return Ok(aluno);
@@ -78,8 +63,9 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               Alunos.Add(aluno);
-               return Ok(Alunos);
+               _contexto.Alunos.Add(aluno);
+               _contexto.SaveChanges();
+               return Ok(aluno);
            }
            catch (System.Exception ex)
            {
@@ -92,7 +78,7 @@ namespace SmartSchool.API.Controllers
         {
            try
            {
-               var alunoBanco = Alunos.FirstOrDefault(a => a.Id == id);
+               var alunoBanco = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
                if(alunoBanco == null)
                 return NotFound("Aluno não encontrado");
                 alunoBanco.Nome = aluno.Nome;
@@ -110,7 +96,7 @@ namespace SmartSchool.API.Controllers
        public IActionResult Patch(int id, Aluno aluno) {
            try
            {
-               var alunoBanco = Alunos.FirstOrDefault(a => a.Id == id);
+               var alunoBanco = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
                if(alunoBanco == null)
                 return NotFound("Aluno não encontrado");
                 if(aluno.Nome != null)
@@ -132,11 +118,11 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               var aluno = Alunos.FirstOrDefault(a => a.Id == id);
+               var aluno = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
                if(aluno == null)
                 return NotFound("Aluno não encontrado");
-                Alunos.Remove(aluno);
-                return Ok(Alunos);
+                _contexto.Alunos.Remove(aluno);
+                return Ok(aluno);
            }
            catch (System.Exception ex)
            {
