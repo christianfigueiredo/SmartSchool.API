@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using SmartSchool.API.Data;
 using SmartSchool.API.Models;
 
@@ -78,12 +79,11 @@ namespace SmartSchool.API.Controllers
         {
            try
            {
-               var alunoBanco = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
+               var alunoBanco = _contexto.Alunos.AsNoTracking().FirstOrDefault(a => a.Id == id);
                if(alunoBanco == null)
                 return NotFound("Aluno não encontrado");
-                alunoBanco.Nome = aluno.Nome;
-                alunoBanco.Sobrenome = aluno.Sobrenome;
-                alunoBanco.Telefone = aluno.Telefone;
+                _contexto.Update(alunoBanco);
+                _contexto.SaveChanges();
                 return Ok(alunoBanco);
            }
            catch (System.Exception ex)
@@ -96,15 +96,11 @@ namespace SmartSchool.API.Controllers
        public IActionResult Patch(int id, Aluno aluno) {
            try
            {
-               var alunoBanco = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
+               var alunoBanco = _contexto.Alunos.AsNoTracking().FirstOrDefault(a => a.Id == id);
                if(alunoBanco == null)
                 return NotFound("Aluno não encontrado");
-                if(aluno.Nome != null)
-                    alunoBanco.Nome = aluno.Nome;
-                if(aluno.Sobrenome != null)
-                    alunoBanco.Sobrenome = aluno.Sobrenome;
-                if(aluno.Telefone != null)
-                    alunoBanco.Telefone = aluno.Telefone;
+                _contexto.Update(alunoBanco);
+                _contexto.SaveChanges();
                 return Ok(alunoBanco);
            }
            catch (System.Exception ex)
@@ -121,8 +117,9 @@ namespace SmartSchool.API.Controllers
                var aluno = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
                if(aluno == null)
                 return NotFound("Aluno não encontrado");
-                _contexto.Alunos.Remove(aluno);
-                return Ok(aluno);
+                _contexto.Remove(aluno);
+                _contexto.SaveChanges();
+                return Ok("Aluno deletado com sucesso");
            }
            catch (System.Exception ex)
            {

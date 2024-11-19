@@ -71,26 +71,26 @@ namespace SmartSchool.API.Controllers
                var professorBanco = _contexto.Professores.FirstOrDefault(a => a.Id == id);
                if(professorBanco == null)
                 return NotFound("Professor não encontrado");
-                professorBanco.Nome = professor.Nome;
+                _contexto.Update(professorBanco);
+                _contexto.SaveChanges();
                 return Ok(professorBanco);
            }
            catch (System.Exception ex)
            {
                return BadRequest($"Erro ao tentar atualizar o Professor: {ex.Message}");
-          }
+           }
        } 
 
-       [HttpPatch("{id}")]
-       [ValidateAntiForgeryToken]
+       [HttpPatch("{id}")]       
        public IActionResult Patch(int id, Professor professor) 
        {
-            try
+              try
            {
                var professorBanco = _contexto.Professores.FirstOrDefault(a => a.Id == id);
                if(professorBanco == null)
                 return NotFound("Professor não encontrado");
-                if(professor.Nome != null)
-                    professorBanco.Nome = professor.Nome;                
+                _contexto.Update(professorBanco);
+                _contexto.SaveChanges();
                 return Ok(professorBanco);
            }
            catch (System.Exception ex)
