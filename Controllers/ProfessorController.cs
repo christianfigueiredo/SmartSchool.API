@@ -9,9 +9,11 @@ namespace SmartSchool.API.Controllers
     public class ProfessorController : ControllerBase
     {
          private readonly Contexto _contexto;
+        private readonly IRepository _repo;
 
-        public ProfessorController(Contexto contexto) 
+        public ProfessorController(Contexto contexto, IRepository repo) 
        {
+            _repo = repo;
            _contexto = contexto;
        }
 
@@ -47,16 +49,19 @@ namespace SmartSchool.API.Controllers
        [HttpPost]
        public IActionResult Post(Professor professor)
        {
-           try
+            try
            {
-               _contexto.Professores.Add(professor);
-               _contexto.SaveChanges();
-               return Ok(professor);
+                _repo.Add(professor);
+                if(_repo.SaveChanges())
+                {
+                    return Ok(professor);
+                }              
+               return BadRequest("Professor não cadastrado");
            }
            catch (System.Exception ex)
            {
-               return BadRequest($"Erro ao tentar adicionar o Professor: {ex.Message}");            
-           }           
+               return BadRequest($"Erro ao tentar adicionar o Professor: {ex.Message}");
+           }      
        }   
 
        [HttpPut("{id}")]

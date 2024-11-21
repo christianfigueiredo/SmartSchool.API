@@ -18,15 +18,7 @@ namespace SmartSchool.API.Controllers
        {
            _contexto = contexto;
            _repo = repo;
-       }
-
-       [HttpGet("resposta")]
-       public IActionResult pegaResposta()
-       {
-           
-           return Ok(_repo.pegaResposta());
        }      
-
 
        [HttpGet]
        public IActionResult Get()
@@ -72,9 +64,12 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               _contexto.Alunos.Add(aluno);
-               _contexto.SaveChanges();
-               return Ok(aluno);
+                _repo.Add(aluno);
+                if(_repo.SaveChanges())
+                {
+                    return Ok(aluno);
+                }              
+               return BadRequest("Aluno não cadastrado");
            }
            catch (System.Exception ex)
            {
@@ -90,9 +85,14 @@ namespace SmartSchool.API.Controllers
                var alunoBanco = _contexto.Alunos.AsNoTracking().FirstOrDefault(a => a.Id == id);
                if(alunoBanco == null)
                 return NotFound("Aluno não encontrado");
-                _contexto.Update(alunoBanco);
-                _contexto.SaveChanges();
-                return Ok(alunoBanco);
+
+                 _repo.Update(aluno);
+                if(_repo.SaveChanges())
+                {
+                    return Ok(aluno);
+                }       
+
+                return BadRequest("Aluno não Atualizado");
            }
            catch (System.Exception ex)
            {
@@ -107,9 +107,13 @@ namespace SmartSchool.API.Controllers
                var alunoBanco = _contexto.Alunos.AsNoTracking().FirstOrDefault(a => a.Id == id);
                if(alunoBanco == null)
                 return NotFound("Aluno não encontrado");
-                _contexto.Update(alunoBanco);
-                _contexto.SaveChanges();
-                return Ok(alunoBanco);
+
+                 _repo.Update(aluno);
+                if(_repo.SaveChanges())
+                {
+                    return Ok(aluno);
+                }              
+                return BadRequest("Aluno não Atualizado");
            }
            catch (System.Exception ex)
            {
@@ -125,9 +129,13 @@ namespace SmartSchool.API.Controllers
                var aluno = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
                if(aluno == null)
                 return NotFound("Aluno não encontrado");
-                _contexto.Remove(aluno);
-                _contexto.SaveChanges();
-                return Ok("Aluno deletado com sucesso");
+
+                 _repo.Delete(aluno);
+                if(_repo.SaveChanges())
+                {
+                    return Ok("aluno deletado");
+                }              
+               return BadRequest("Aluno não Deletado");
            }
            catch (System.Exception ex)
            {
