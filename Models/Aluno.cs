@@ -4,19 +4,30 @@ namespace SmartSchool.API.Models
     {
         public Aluno()  { }
 
-        public Aluno(int Id, string Nome, string Sobrenome, string Telefone) 
+        public Aluno(int id,
+                     int matricula ,
+                     string nome, 
+                     string sobrenome, 
+                     string telefone, 
+                     DateTime dataNascimento) 
         {
-            this.Id = Id;
-            this.Nome = Nome;
-            this.Sobrenome = Sobrenome;
-            this.Telefone = Telefone;
-
+            this.Id = id;
+            this.Matricula = matricula;
+            this.Nome = nome;
+            this.Sobrenome = sobrenome;
+            this.Telefone = telefone;            
+            this.DataNascimento = dataNascimento;
         }
 
         public int Id { get; set;}
+        public int Matricula { get; set; }
         public string Nome { get; set;}
         public string Sobrenome { get; set;}
-        public string Telefone { get; set;}  
+        public string Telefone { get; set;} 
+        public DateTime DataNascimento { get; set; } 
+        public DateTime DataMatricula { get; set; } = DateTime.Now;
+        public DateTime? DataFinalMatricula { get; set; } = null;
+        public bool Ativo { get; set; } = true;
         public IEnumerable<AlunoDisciplina> AlunosDisciplinas { get; set; }
 
     }
