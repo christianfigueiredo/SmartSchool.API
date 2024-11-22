@@ -8,19 +8,18 @@ namespace SmartSchool.API.Controllers
     [Route("api/[controller]")]
     public class ProfessorController : ControllerBase
     {
-         private readonly Contexto _contexto;
+       
         private readonly IRepository _repo;
 
-        public ProfessorController(Contexto contexto, IRepository repo) 
+        public ProfessorController(IRepository repo) 
        {
-            _repo = repo;
-           _contexto = contexto;
+            _repo = repo;          
        }
 
        [HttpGet]
        public IActionResult Get()
        {
-           var professores = _contexto.Professores.ToList();
+           var professores = _repo.GetAllProfessores(true);
            return Ok(professores);
        } 
 
@@ -28,23 +27,7 @@ namespace SmartSchool.API.Controllers
        public IActionResult GetById(int id)
        {
            return Ok(new { id });
-       } 
-
-       [HttpGet("ByNome")]
-       public IActionResult GetByNome(string nome)
-       {
-            try
-           {
-               var professor = _contexto.Professores.FirstOrDefault(a => a.Nome.Contains(nome));
-               if(professor == null)
-                return NotFound("Professor não encontrado");
-               return Ok(professor);
-           }
-           catch (System.Exception ex)
-           {
-               return BadRequest($"Erro ao tentar buscar o professor: {ex.Message}");
-           }
-       }
+       }       
 
        [HttpPost]
        public IActionResult Post(Professor professor)
@@ -69,12 +52,15 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               var professorBanco = _contexto.Professores.FirstOrDefault(a => a.Id == id);
+               var professorBanco = _repo.GetProfessorById(id, false);
                if(professorBanco == null)
                 return NotFound("Professor não encontrado");
-                _contexto.Update(professorBanco);
-                _contexto.SaveChanges();
-                return Ok(professorBanco);
+                _repo.Update(professorBanco);
+                if(_repo.SaveChanges())
+                {
+                    return Ok(professorBanco);
+                }               
+                return BadRequest("Professor não Atualizado");
            }
            catch (System.Exception ex)
            {
@@ -87,12 +73,14 @@ namespace SmartSchool.API.Controllers
        {
               try
            {
-               var professorBanco = _contexto.Professores.FirstOrDefault(a => a.Id == id);
+               var professorBanco = _repo.GetProfessorById(id, false);
                if(professorBanco == null)
                 return NotFound("Professor não encontrado");
-                _contexto.Update(professorBanco);
-                _contexto.SaveChanges();
-                return Ok(professorBanco);
+                _repo.Update(professorBanco);
+                if(_repo.SaveChanges()) {
+                    return Ok(professorBanco);
+                }
+                return BadRequest("Professor não Atualizado");
            }
            catch (System.Exception ex)
            {
@@ -105,11 +93,15 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               var professor = _contexto.Professores.FirstOrDefault(a => a.Id == id);
+               var professor = _repo.GetProfessorById(id, false);
                if(professor == null)
                 return NotFound("Professor não encontrado");
-                _contexto.Professores.Remove(professor);
-                return Ok(professor);
+                _repo.Delete(professor);
+                if(_repo.SaveChanges()) 
+                {
+                    return Ok("Professor deletado");
+                }
+                return BadRequest("Professor não Deletado");
            }
            catch (System.Exception ex)
            {

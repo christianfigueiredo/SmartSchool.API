@@ -10,20 +10,18 @@ namespace SmartSchool.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class AlunoController : ControllerBase
-    {        
-        private readonly Contexto _contexto;
+    { 
         public readonly IRepository _repo;
 
-        public AlunoController(Contexto contexto, IRepository repo) 
-       {
-           _contexto = contexto;
+        public AlunoController( IRepository repo) 
+       {           
            _repo = repo;
        }      
 
        [HttpGet]
        public IActionResult Get()
        {
-           var alunos = _contexto.Alunos.ToList();
+           var alunos = _repo.GetAllAlunos(true);
            return Ok(alunos);
        }      
 
@@ -32,7 +30,7 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               var aluno = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
+               var aluno = _repo.GetAlunoById(id, false);
                if(aluno == null)
                 return NotFound("Id não encontrado");
                return Ok(aluno);
@@ -42,23 +40,7 @@ namespace SmartSchool.API.Controllers
                return BadRequest($"Erro ao tentar buscar aluno: {ex.Message}");
            }
        }
-
-       [HttpGet("GetByName")]
-       public IActionResult GetByName(string nome, string sobrenome)
-       {
-           try
-           {
-               var aluno = _contexto.Alunos.FirstOrDefault(a => a.Nome.Contains(nome) && a.Sobrenome.Contains(sobrenome));
-               if(aluno == null)
-                return NotFound("Aluno não encontrado");
-               return Ok(aluno);
-           }
-           catch (System.Exception ex)
-           {
-               return BadRequest($"Erro ao tentar buscar aluno: {ex.Message}");
-           }
-       }
-
+       
        [HttpPost]
        public IActionResult Post(Aluno aluno)
        {
@@ -82,7 +64,7 @@ namespace SmartSchool.API.Controllers
         {
            try
            {
-               var alunoBanco = _contexto.Alunos.AsNoTracking().FirstOrDefault(a => a.Id == id);
+               var alunoBanco = _repo.GetAlunoById(id, false);
                if(alunoBanco == null)
                 return NotFound("Aluno não encontrado");
 
@@ -104,7 +86,7 @@ namespace SmartSchool.API.Controllers
        public IActionResult Patch(int id, Aluno aluno) {
            try
            {
-               var alunoBanco = _contexto.Alunos.AsNoTracking().FirstOrDefault(a => a.Id == id);
+               var alunoBanco = _repo.GetAlunoById(id, false);
                if(alunoBanco == null)
                 return NotFound("Aluno não encontrado");
 
@@ -126,7 +108,7 @@ namespace SmartSchool.API.Controllers
        {
            try
            {
-               var aluno = _contexto.Alunos.FirstOrDefault(a => a.Id == id);
+               var aluno = _repo.GetAlunoById(id, false);;
                if(aluno == null)
                 return NotFound("Aluno não encontrado");
 
