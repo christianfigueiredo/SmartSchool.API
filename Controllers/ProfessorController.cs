@@ -7,8 +7,7 @@ namespace SmartSchool.API.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class ProfessorController : ControllerBase
-    {
-       
+    {       
         private readonly IRepository _repo;
 
         public ProfessorController(IRepository repo) 
