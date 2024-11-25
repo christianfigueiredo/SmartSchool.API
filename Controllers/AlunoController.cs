@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using SmartSchool.API.Data;
+using SmartSchool.API.DTOs;
 using SmartSchool.API.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,17 +13,21 @@ namespace SmartSchool.API.Controllers
     public class AlunoController : ControllerBase
     { 
         public readonly IRepository _repo;
+        private readonly IMapper _mapper;
 
-        public AlunoController( IRepository repo) 
+        public AlunoController( IRepository repo, IMapper mapper) 
        {           
+            _mapper = mapper;
            _repo = repo;
        }      
 
        [HttpGet]
        public IActionResult Get()
        {
-           var alunos = _repo.GetAllAlunos(false);
-           return Ok(alunos);
+           var alunos = _repo.GetAllAlunos(true);
+
+          
+           return Ok(_mapper.Map<IEnumerable<AlunoDto>>(alunos));
        }      
 
        [HttpGet("{id}")] 
