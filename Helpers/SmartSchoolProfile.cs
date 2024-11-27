@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using SmartSchool.API.DTOs;
 using SmartSchool.API.Models;
@@ -22,6 +18,9 @@ namespace SmartSchool.API.Helpers
                             dest => dest.Idade,
                             opt => opt.MapFrom(src => src.DataNascimento.GetCurrentAge())
                          );
+
+            CreateMap<AlunoDto, Aluno>();
+            CreateMap<Aluno, AlunoRegisterDto>().ReverseMap();
         }
         
     }
